@@ -1,5 +1,5 @@
 export const findFolder = (folders = [], folderId) =>
-  folders.find((folder) => folder.id === folderId);
+  folders.find((folder) => folder.id === Number(folderId));
 
 export const findNote = (notes = [], noteId) => {
   return notes.find((note) => note.id === Number(noteId)); 
