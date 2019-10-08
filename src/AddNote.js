@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ApiContext from './ApiContext';
 import config from './config';
-import NotefulForm from './NotefulForm/NotefulForm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CircleButton from './CircleButton/CircleButton';
 
@@ -17,36 +16,45 @@ class AddNote extends Component {
 
   state = {
     error: null,
+    note_name: '',
+    content: '',
+    folder_id: 1,
   };
 
-  handleSubmit = (bookmark, callback) => {
+  handleChangeNoteName = (e) => {
+    this.setState({ note_name: e.target.value });
+  };
+
+  handleChangeNoteContent = (e) => {
+    this.setState({ content: e.target.value });
+  };
+
+  handleSubmit = (e) => {
+    e.preventDefault();
+    const newNote = {
+      note_name: this.state.note_name,
+      content: this.state.content,
+      folder_id: this.state.folder_id,
+    };
     this.setState({ error: null });
-    fetch(config.API_ENDPOINT, {
+    fetch(`${config.API_ENDPOINT}/notes`, {
       method: 'POST',
-      body: JSON.stringify(bookmark),
       headers: {
-        'content-type': 'application/json',
-        authorization: `bearer ${config.API_KEY}`,
+        'Content-Type': 'application/json',
       },
+      body: JSON.stringify(newNote),
     })
       .then((res) => {
-        if (!res.ok) return res.json().then((error) => Promise.reject(error));
-
-        return res.json();
+        if (!res.ok) return res.json().then((e) => Promise.reject(e));
+        return;
       })
-      .then((data) => {
-        callback(data);
-        this.context.addBookmark(data);
-        this.props.history.push('/');
+      .then(() => {
+        this.context.addNote(newNote);
+        this.props.history.goBack();
       })
       .catch((error) => {
-        console.error(error);
-        this.setState({ error });
+        console.error({ error });
       });
-  };
-
-  handleClickCancel = () => {
-    this.props.history.push('/');
   };
 
   render() {
@@ -64,11 +72,17 @@ class AddNote extends Component {
           Back
         </CircleButton>
         <h2>Add Note</h2>
-        <NotefulForm
-          error={error}
-          onSubmit={this.handleSubmit}
-          onCancel={this.handleClickCancel}
-        />
+        <form onSubmit={this.handleSubmit}>
+          <label htmlFor="noteName">Add Note</label>
+          <input name="noteName" id="noteName" onChange={this.handleChangeNoteName} />
+          <label htmlFor="noteContent">Content</label>
+          <textarea
+            name="noteContent"
+            id="noteContent"
+            onChange={this.handleChangeNoteContent}
+          />
+          <button type="submit">Add Note</button>
+        </form>
       </section>
     );
   }
