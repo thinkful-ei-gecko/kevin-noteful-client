@@ -1,8 +1,9 @@
-import React, { Component } from  'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ApiContext from './ApiContext';
-import config from './config'
-import NotefulForm from './NotefulForm/NotefulForm'
+import config from './config';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import CircleButton from './CircleButton/CircleButton';
 
 class AddFolder extends Component {
   static propTypes = {
@@ -15,49 +16,63 @@ class AddFolder extends Component {
 
   state = {
     error: null,
+    folderName: '',
   };
 
-  handleSubmit = (bookmark, callback) => {
-    this.setState({ error: null })
-    fetch(config.API_ENDPOINT, {
+  handleChangeFolderName = (e) => {
+    this.setState({ folderName: e.target.value });
+  };
+
+  handleSubmit = (e) => {
+    e.preventDefault();
+    const newFolder = {
+      folder_name: this.state.folderName,
+    }
+    this.setState({ error: null });
+    fetch(`${config.API_ENDPOINT}/folders`, {
       method: 'POST',
-      body: JSON.stringify(bookmark),
       headers: {
-        'content-type': 'application/json',
-        'authorization': `bearer ${config.API_KEY}`
-      }
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(newFolder),
     })
-      .then(res => {
-        if (!res.ok)
-          return res.json().then(error => Promise.reject(error))
-
-        return res.json()
+      .then((res) => {
+        if (!res.ok) return res.json().then((e) => Promise.reject(e));
+        return;
       })
-      .then(data => {
-        callback(data)
-        this.context.addBookmark(data)
-        this.props.history.push('/')
+      .then(() => {
+        this.context.addFolder(newFolder);
+        this.props.history.goBack();
       })
-      .catch(error => {
-        console.error(error)
-        this.setState({ error })
-      })
-  }
-
-  handleClickCancel = () => {
-    this.props.history.push('/')
+      .catch((error) => {
+        console.error({ error });
+      });
   };
 
   render() {
-    const { error } = this.state
+    const { error } = this.state;
     return (
-      <section className='AddBookmark'>
-        <h2>Create a bookmark</h2>
-        <NotefulForm
-          error={error}
-          onSubmit={this.handleSubmit}
-          onCancel={this.handleClickCancel}
-        />
+      <section className="AddFolder">
+        <CircleButton
+          tag="button"
+          role="link"
+          onClick={() => this.props.history.goBack()}
+          className="NotePageNav__back-button"
+        >
+          <FontAwesomeIcon icon="chevron-left" />
+          <br />
+          Back
+        </CircleButton>
+        <h2>Add Folder</h2>
+        <form onSubmit={this.handleSubmit}>
+          <label htmlFor="folderName">Add Folder</label>
+          <input
+            name="folderName"
+            id="folderName"
+            onChange={this.handleChangeFolderName}
+          />
+          <button type="submit">Add Folder</button>
+        </form>
       </section>
     );
   }
