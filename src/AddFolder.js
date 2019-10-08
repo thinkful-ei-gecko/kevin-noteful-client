@@ -65,13 +65,13 @@ class AddFolder extends Component {
         </CircleButton>
         <h2>Add Folder</h2>
         <form onSubmit={this.handleSubmit}>
-          <label htmlFor="folderName">Add Folder</label>
+          <label htmlFor="folderName">Add Folder</label><br/>
           <input
             name="folderName"
             id="folderName"
             onChange={this.handleChangeFolderName}
           />
-          <button type="submit">Add Folder</button>
+          <button type="submit">Submit</button>
         </form>
       </section>
     );

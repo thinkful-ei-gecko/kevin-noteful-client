@@ -29,6 +29,10 @@ class AddNote extends Component {
     this.setState({ content: e.target.value });
   };
 
+  handleChangeNoteFolder = (e) => {
+    this.setState({ folder_id: Number(e.target.value) });
+  }
+
   handleSubmit = (e) => {
     e.preventDefault();
     const newNote = {
@@ -73,14 +77,18 @@ class AddNote extends Component {
         </CircleButton>
         <h2>Add Note</h2>
         <form onSubmit={this.handleSubmit}>
-          <label htmlFor="noteName">Add Note</label>
-          <input name="noteName" id="noteName" onChange={this.handleChangeNoteName} />
-          <label htmlFor="noteContent">Content</label>
+          <label htmlFor="noteName">Note Name</label><br/>
+          <input name="noteName" id="noteName" onChange={this.handleChangeNoteName} /><br/><br/>
+
+          <label htmlFor="folderid">Folder ID</label><br/>
+          <input name="folderid" id="folderid" onChange={this.handleChangeNoteFolder} /><br/><br/>
+
+          <label htmlFor="noteContent">Content</label><br/>
           <textarea
             name="noteContent"
             id="noteContent"
             onChange={this.handleChangeNoteContent}
-          />
+          /><br/><br/>
           <button type="submit">Add Note</button>
         </form>
       </section>
