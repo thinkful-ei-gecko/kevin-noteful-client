@@ -12,3 +12,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.error {
+  color: red;
+  font-weight: bolder;
+}
