@@ -16,23 +16,33 @@ class AddFolder extends Component {
 
   state = {
     error: null,
-    folderName: '',
+    folderName: {
+      value: '',
+      touched: false,
+    }
   };
 
+  validateName() {
+    const name = this.state.folderName.value.trim();
+    if (name.length === 0) {
+      return 'Name is required';
+    }
+  }
+
   handleChangeFolderName = (e) => {
-    this.setState({ folderName: e.target.value });
+    this.setState({ folderName: { value: e.target.value, touched: true } });
   };
 
   handleSubmit = (e) => {
     e.preventDefault();
     const newFolder = {
-      folder_name: this.state.folderName,
-    }
+      folder_name: this.state.folderName.value,
+    };
     this.setState({ error: null });
     fetch(`${config.API_ENDPOINT}/folders`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(newFolder),
     })
@@ -65,13 +75,20 @@ class AddFolder extends Component {
         </CircleButton>
         <h2>Add Folder</h2>
         <form onSubmit={this.handleSubmit}>
-          <label htmlFor="folderName">Add Folder</label><br/>
+          <label htmlFor="folderName">Add Folder</label>
+          <br />
           <input
             name="folderName"
             id="folderName"
             onChange={this.handleChangeFolderName}
           />
-          <button type="submit">Submit</button>
+          {this.state.folderName.touched && (
+            <div className="error">{this.validateName()}</div>
+          )}
+          <br/>
+          <button type="submit" disabled={this.validateName()}>
+            Submit
+          </button>
         </form>
       </section>
     );
